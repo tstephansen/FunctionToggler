@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AppKit
+internal import UniformTypeIdentifiers
 
 struct SettingsView: View {
     @ObservedObject private var store = SettingsStore.shared
@@ -61,7 +62,7 @@ struct SettingsView: View {
                 .font(.largeTitle)
                 .foregroundColor(.accentColor)
             VStack(alignment: .leading) {
-                Text("FnKey Toggler")
+                Text("Function Toggler")
                     .font(.title2.bold())
                 Text("Automatically toggle function keys per app")
                     .font(.subheadline)
@@ -211,11 +212,13 @@ struct AppPickerView: View {
                             .resizable()
                             .frame(width: 20, height: 20)
                     }
-                    Text(app.name)
+                    VStack(alignment: .leading) {
+                        Text(app.name)
+                        Text(app.bundleID)
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
                     Spacer()
-                    Text(app.bundleID)
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
                 }
                 .tag(app.bundleID)
             }
@@ -230,6 +233,8 @@ struct AppPickerView: View {
                 .frame(maxWidth: 320)
 
                 Spacer()
+
+                Button("Browse…") { browseForApp() }
 
                 Button("Cancel") { dismiss() }
                     .keyboardShortcut(.cancelAction)
@@ -254,6 +259,30 @@ struct AppPickerView: View {
         .onAppear(perform: loadInstalledApps)
     }
 
+    private func browseForApp() {
+        let panel = NSOpenPanel()
+        panel.title = "Choose an Application"
+        panel.allowedContentTypes = [.application]
+        panel.allowsMultipleSelection = false
+        panel.canChooseDirectories = false
+        panel.directoryURL = URL(fileURLWithPath: "/Applications")
+
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+
+        guard let bundle = Bundle(url: url),
+              let bid = bundle.bundleIdentifier else { return }
+
+        let name = url.deletingPathExtension().lastPathComponent
+        let icon = NSWorkspace.shared.icon(forFile: url.path)
+        let appInfo = AppInfo(bundleID: bid, name: name, icon: icon)
+
+        if !runningApps.contains(where: { $0.bundleID == bid }) {
+            runningApps.append(appInfo)
+            runningApps.sort { $0.name.localizedCompare($1.name) == .orderedAscending }
+        }
+        selectedBundleID = bid
+    }
+
     private func loadInstalledApps() {
         var seen = Set<String>()
         var apps: [AppInfo] = []
@@ -271,9 +300,15 @@ struct AppPickerView: View {
         }
 
         let fm = FileManager.default
-        if let contents = try? fm.contentsOfDirectory(atPath: "/Applications") {
+        let appFolders = [
+            "/Applications",
+            (NSHomeDirectory() as NSString).appendingPathComponent("Applications")
+        ]
+
+        for folder in appFolders {
+            guard let contents = try? fm.contentsOfDirectory(atPath: folder) else { continue }
             for item in contents where item.hasSuffix(".app") {
-                let path = "/Applications/\(item)"
+                let path = (folder as NSString).appendingPathComponent(item)
                 if let bundle = Bundle(path: path),
                    let bid = bundle.bundleIdentifier,
                    !seen.contains(bid) {
