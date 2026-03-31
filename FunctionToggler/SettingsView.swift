@@ -36,11 +36,21 @@ struct SettingsView: View {
 
             appRulesList
 
+            Divider()
+            
             HStack {
                 Button(action: { showingAppPicker = true }) {
                     Label("Add App", systemImage: "plus")
                 }
                 Spacer()
+                HStack {
+                    Toggle("Launch at Login", isOn: Binding(
+                        get: { store.startAtLogin },
+                        set: { store.setStartAtLogin($0) }
+                    ))
+                    .toggleStyle(.switch)
+                    .font(.subheadline.bold())
+                }
             }
             .padding(.horizontal)
             .padding(.vertical, 8)
@@ -58,9 +68,7 @@ struct SettingsView: View {
 
     private var headerSection: some View {
         HStack {
-            Image(systemName: "keyboard")
-                .font(.largeTitle)
-                .foregroundColor(.accentColor)
+            Image("MainIcon")
             VStack(alignment: .leading) {
                 Text("Function Toggler")
                     .font(.title2.bold())
@@ -328,5 +336,5 @@ struct AppPickerView: View {
 
 #Preview {
     SettingsView()
-        .frame(width: 520, height: 460)
+        .frame(width: 520, height: 600)
 }
