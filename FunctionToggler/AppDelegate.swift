@@ -93,9 +93,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let imageName: String
         if let useFnAsStandard {
-            imageName = useFnAsStandard ? "IconOtherMode" : "IconAppleMode"
+            imageName = useFnAsStandard ? "FunctionIcon" : "MediaIcon"
         } else {
-            imageName = "IconAppleMode"
+            imageName = "MediaIcon"
         }
 
         button.image = NSImage(named: imageName)
