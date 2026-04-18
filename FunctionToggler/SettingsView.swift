@@ -12,6 +12,8 @@ internal import UniformTypeIdentifiers
 struct SettingsView: View {
     @ObservedObject private var store = SettingsStore.shared
     @State private var showingAppPicker = false
+    @State private var hasAccessibility = AXIsProcessTrusted()
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -43,6 +45,31 @@ struct SettingsView: View {
                     Label("Add App", systemImage: "plus")
                 }
                 Spacer()
+                Button(action: {
+                    requestAccessibilityPermissionIfNeeded()
+                }) {
+                    Label(
+                        hasAccessibility ? "Accessibility Enabled" : "Enable Accessibility",
+                        systemImage: hasAccessibility ? "lock.open" : "lock"
+                    )
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 14)
+                    .foregroundStyle(accessibilityButtonForegroundColor)
+                    .background(accessibilityButtonBackgroundColor)
+                    .cornerRadius(8)
+                }
+                .buttonStyle(.plain)
+                .disabled(hasAccessibility)
+                .padding()
+                .onReceive(
+                    NotificationCenter.default.publisher(
+                        for: NSApplication.didBecomeActiveNotification
+                    )
+                ) { _ in
+                    refreshAccessibilityStatus()
+                }
+                Spacer()
                 HStack {
                     Toggle("Launch at Login", isOn: Binding(
                         get: { store.startAtLogin },
@@ -61,6 +88,42 @@ struct SettingsView: View {
             AppPickerView { rule in
                 store.addRule(rule)
             }
+        }
+    }
+    
+    // MARK: - Accessibility
+    
+    private func refreshAccessibilityStatus() {
+        hasAccessibility = AXIsProcessTrusted()
+    }
+    
+    private func requestAccessibility() {
+        if !checkAccessibilityPermission() {
+            print("⚠️  Accessibility permission not granted. Window detection will not work until permission is enabled in System Settings → Privacy & Security → Accessibility.")
+            requestAccessibilityPermissionIfNeeded()
+        }
+    }
+    
+    private func checkAccessibilityPermission() -> Bool {
+        AXIsProcessTrusted()
+    }
+
+    private func requestAccessibilityPermissionIfNeeded() {
+        guard !AXIsProcessTrusted() else { return }
+
+        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+        _ = AXIsProcessTrustedWithOptions(options)
+    }
+    
+    private var accessibilityButtonBackgroundColor: Color {
+        hasAccessibility ? Color.green : Color.red.opacity(0.8)
+    }
+
+    private var accessibilityButtonForegroundColor: Color {
+        if hasAccessibility {
+            return colorScheme == .dark ? .white : .black
+        } else {
+            return .white
         }
     }
 
@@ -138,7 +201,6 @@ struct SettingsView: View {
                                       : Color.gray.opacity(0.15))
                         )
 
-                    // Quick toggle
                     Toggle("", isOn: Binding(
                         get: { rule.useFnAsStandard },
                         set: { newValue in

@@ -25,8 +25,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         windowObserver = WindowObserver()
         observeWindowObserver()
         windowObserver.start()
-
-        requestAccessibilityPermission()
     }
 
     // MARK: - Menu
@@ -124,7 +122,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let settingsView = SettingsView()
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 520, height: 600),
+            contentRect: NSRect(x: 0, y: 0, width: 600, height: 600),
             styleMask: [.titled, .closable, .resizable],
             backing: .buffered,
             defer: false
@@ -140,16 +138,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func quitApp() {
         NSApp.terminate(nil)
-    }
-
-    // MARK: - Accessibility
-
-    private func requestAccessibilityPermission() {
-        let options: NSDictionary = [kAXTrustedCheckOptionPrompt.takeRetainedValue(): true]
-        let trusted = AXIsProcessTrustedWithOptions(options)
-        if !trusted {
-            print("⚠️  Accessibility permission not granted. Window detection will not work until permission is enabled in System Settings → Privacy & Security → Accessibility.")
-        }
     }
 }
 
