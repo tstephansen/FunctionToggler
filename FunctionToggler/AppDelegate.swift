@@ -90,14 +90,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard let button = statusItem.button else { return }
 
         let imageName: String
-        if let useFnAsStandard {
-            imageName = useFnAsStandard ? "FunctionIcon" : "MediaIcon"
+        if useFnAsStandard == true {
+            imageName = "Standard"
         } else {
-            imageName = "MediaIcon"
+            imageName = "Media"
         }
 
         button.image = NSImage(named: imageName)
-        button.image?.isTemplate = false
+        button.image?.isTemplate = true
         button.image?.size = NSSize(width: 18, height: 18)
     }
 

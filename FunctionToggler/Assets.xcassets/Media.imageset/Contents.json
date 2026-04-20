@@ -1,16 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "FunctionIcon.png",
+      "filename" : "Media.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "FunctionIcon@2x.png",
+      "filename" : "Media@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "Media@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

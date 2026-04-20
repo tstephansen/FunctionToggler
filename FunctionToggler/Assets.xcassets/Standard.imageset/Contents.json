@@ -1,16 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "MediaIcon.png",
+      "filename" : "Standard.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "MediaIcon@2x.png",
+      "filename" : "Standard@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "Standard@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
