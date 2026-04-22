@@ -6,13 +6,28 @@ Download the application and run it. This application runs in the menubar and re
 
 ## Screenshots
 
-Settings Page
-![Settings View](Assets/Settings.png "Settings View")
+### Settings Page
+<div style="display: flex;">
+  <div style="flex: 1; padding-right: 10px;">
+    <h4>Light Mode</h3>
+    <img src="Assets/Settings.png" alt="Settings"/>
+  </div>
+  <div style="flex: 1; padding-left: 10px;">
+    <h4>Dark Mode</h3>
+    <img src="Assets/SettingsDark.png" alt="Settings Dark"/>
+  </div>
+</div>
 
-Standard Mode (Menubar)
+<hr/>
 
-![Standard](Assets/Standard.png "Standard Mode")
-
-Media Mode (Menubar)
-
-![Media](Assets/Media.png "Media Mode")
+### Modes
+<div style="display: flex;">
+  <div style="flex: 1; padding-right: 10px;">
+    <h4>Media Mode</h3>
+    <img src="Assets/Media.png" alt="Media Mode"/>
+  </div>
+  <div style="flex: 1; padding-left: 10px;">
+    <h4>Standard Mode</h3>
+    <img src="Assets/Standard.png" alt="Standard Mode"/>
+  </div>
+</div>
